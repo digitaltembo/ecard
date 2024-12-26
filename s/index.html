@@ -90,15 +90,6 @@
         const messages = ["1QJYr8Snae3qIoHaxMxpMrUhYd+BIw=="];
         let status = "closed";
 
-        function fromBase64(base64) {
-          var binary = atob(base64);
-          var bytes = new Uint8Array(binary.length);
-          for (var i = 0; i < binary.length; i++) {
-            bytes[i] = binary.charCodeAt(i);
-          }
-          return bytes.buffer;
-        }
-
         function open() {
           if (status === "closed") {
             console.log("opening");
@@ -128,6 +119,15 @@
               status = "closed";
             }, 2000);
           }
+        }
+
+        function fromBase64(base64) {
+          var binary = atob(base64);
+          var bytes = new Uint8Array(binary.length);
+          for (var i = 0; i < binary.length; i++) {
+            bytes[i] = binary.charCodeAt(i);
+          }
+          return bytes.buffer;
         }
 
         async function decryptMessage(pwd, possibleMessages) {
@@ -179,7 +179,7 @@
 
         async function decryptAndReplaceMessage() {
           if (window.location.hash) {
-            const [pwd, secret] = window.location.hash.split(":");
+            const [pwd, secret] = window.location.hash.slice(1).split(":");
 
             const contents = await decryptMessage(pwd, messages);
             if (contents) {
