@@ -34,7 +34,7 @@ async function encrypt(pwd, contents) {
     ["encrypt", "decrypt"]
   );
   const buffer = await crypto.subtle.encrypt(
-    { name: "AES-GCM", iv: window.crypto.getRandomValues(new Uint8Array(12)) },
+    { name: "AES-GCM", iv },
     key,
     new TextEncoder().encode(contents)
   );
