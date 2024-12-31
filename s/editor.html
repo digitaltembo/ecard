@@ -1,0 +1,107 @@
+<html>
+  <head>
+    <title>Season's Greetings!</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="cypher"></div>
+    <button type="button" id="encode">Encode</button>
+    <button type="button" id="toggle">Toggle HTML</button>
+    <input type="text" id="password" placeholder="password" />
+    <div id="quilContainer">
+      <div id="quilEditor">
+        <p>Hello World!</p>
+      </div>
+    </div>
+    <br />
+    <textarea id="htmlEditor" style="display: none"></textarea>
+
+    <!-- Include the Quill library -->
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+
+    <!-- Initialize Quill editor -->
+    <script>
+      function makeEditor() {
+        return new Quill("#quilEditor", {
+          theme: "snow",
+        });
+      }
+      let quill = makeEditor();
+      function toBase64(buffer) {
+        let binary = "";
+        const bytes = new Uint8Array(buffer);
+        for (let i = 0; i < bytes.byteLength; i++) {
+          binary += String.fromCharCode(bytes[i]);
+        }
+        return btoa(binary);
+      }
+
+      async function encrypt(pwd, contents, theme = "christmas") {
+        const encoder = new TextEncoder();
+        const iv = window.crypto.getRandomValues(new Uint8Array(12));
+        const salt = window.crypto.getRandomValues(new Uint8Array(20));
+        const key = await crypto.subtle.deriveKey(
+          {
+            name: "PBKDF2",
+            salt,
+            iterations: 1_000_000,
+            hash: "SHA-256",
+          },
+          await crypto.subtle.importKey(
+            "raw",
+            encoder.encode(pwd),
+            "PBKDF2",
+            false,
+            ["deriveBits", "deriveKey"]
+          ),
+          {
+            name: "AES-GCM",
+            length: 256,
+          },
+          true,
+          ["encrypt", "decrypt"]
+        );
+        const cyphertext = await crypto.subtle.encrypt(
+          { name: "AES-GCM", iv },
+          key,
+          encoder.encode(contents)
+        );
+
+        return `${theme} ${toBase64(iv)} ${toBase64(salt)} ${toBase64(
+          cyphertext
+        )}`;
+      }
+
+      document.getElementById("encode").addEventListener("click", () => {
+        const password = document.getElementById("password").value;
+        const contents = quill
+          ? quill.getSemanticHTML()
+          : document.getElementById("htmlEditor").value;
+        encrypt(password, contents).then((cypher) => {
+          document.getElementById("cypher").innerText = cypher;
+        });
+      });
+
+      document.getElementById("toggle").addEventListener("click", () => {
+        if (quill == null) {
+          document.getElementById("quilContainer").style.display = "initial";
+          document.getElementById("htmlEditor").style.display = "none";
+          document.getElementById(
+            "quilContainer"
+          ).innerHTML = `<div id="quilEditor">
+              ${document.getElementById("htmlEditor").value}
+            </div>`;
+          quill = makeEditor();
+        } else {
+          document.getElementById("quilContainer").style.display = "none";
+          document.getElementById("htmlEditor").style.display = "initial";
+          document.getElementById("htmlEditor").value = quill.getSemanticHTML();
+          quill = null;
+        }
+      });
+    </script>
+  </body>
+</html>
