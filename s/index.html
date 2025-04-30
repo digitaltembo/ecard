@@ -211,43 +211,40 @@
         document.getElementById("right").addEventListener("click", close);
 
         decryptAndReplaceMessage();
-        window.setTimeout(open, 10_000);
+        window.setTimeout(open, 6_000);
       };
     </script>
   </head>
   <body>
     <image
-      src="snow6.jpg"
+      src="sailing.jpg"
       width="100%"
       height="100%"
       style="position: fixed; top: 0"
     />
     <section>
       <div id="left">
-        <div id="outerCard">
-          <video autoplay loop muted width="100%" height="100%">
-            <source src="snowday.mp4" type="video/mp4" />
-          </video>
-        </div>
-        <image
-          class="hidden"
-          id="innerCard"
-          src="onwards.jpg"
-          width="100%"
-          height="100%"
-        />
+        <image id="outerCard" src="bday.png" width="100%" height="100%" />
+        <div class="hidden" id="innerCard" width="100%" height="100%"></div>
       </div>
       <div id="right">
         <audio id="music" controls>
-          <source src="joytotheworld.mp3" type="audio/mpeg" />
+          <source src="beethoven.ogg" type="audio/mpeg" />
         </audio>
         <div id="message">
-          <h1>Season's Greetings and a Happy Holidays!</h1>
+          <h1>Happy Birthday Dad!</h1>
           <p>
-            Hope you are well and wishing you all the best as we head off into
-            the new year!
+            Hope you're out enjoying some sun! I've been sitting out on my porch
+            for a few days now and starting to appreciate the summerish months.
           </p>
-          <p>With love from Nolan (&amp; Olympia)</p>
+          <p>
+            Got you a magazine subscription - WindCheck? Recommended by a random
+            person on the internet, who knows if it is any good, probably good
+            pictures of sailboats and sailing around the northeast, maybe a
+            bore, but maybe good to be reading something not on an ipad. Who
+            knows!?
+          </p>
+          <p>Love, Nolan</p>
         </div>
       </div>
     </section>
